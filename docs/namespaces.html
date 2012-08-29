@@ -1,0 +1,119 @@
+<!DOCTYPE html>  <html> <head>   <title>namespaces.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="activation.html">                 activation.coffee               </a>                                           <a class="source" href="adaptation.html">                 adaptation.coffee               </a>                                           <a class="source" href="composition.html">                 composition.coffee               </a>                                           <a class="source" href="contexts.html">                 contexts.coffee               </a>                                           <a class="source" href="epilogue.html">                 epilogue.coffee               </a>                                           <a class="source" href="namespaces.html">                 namespaces.coffee               </a>                                           <a class="source" href="prologue.html">                 prologue.coffee               </a>                                           <a class="source" href="prototypes.html">                 prototypes.coffee               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               namespaces.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <p><a href="https://github.com/tagae/context-traits">Context Traits</a>.
+Copyright © 2012 UCLouvain.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">Namespace = </span><span class="nf">(name, parent = null) -&gt;</span>
+  <span class="nx">unless</span> <span class="nx">name</span>
+    <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span> <span class="s2">&quot;Namespaces must have a name&quot;</span>
+  <span class="k">this</span><span class="p">.</span><span class="nv">name = </span><span class="nx">name</span>
+  <span class="k">this</span><span class="p">.</span><span class="nv">parent = </span><span class="nx">parent</span>
+  <span class="nx">unless</span> <span class="nx">parent</span>
+    <span class="k">this</span><span class="p">.</span><span class="nv">home = </span><span class="nx">findScriptHome</span><span class="p">()</span>
+  <span class="k">this</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>Define main behaviour of <code>Namespace</code>.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">_</span><span class="p">.</span><span class="nx">extend</span> <span class="nx">Namespace</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span>
+
+  <span class="nv">root: </span><span class="o">-&gt;</span>
+    <span class="k">if</span> <span class="k">this</span><span class="p">.</span><span class="nx">parent</span><span class="o">?</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">root</span><span class="p">()</span>
+    <span class="k">else</span>
+      <span class="k">this</span>
+
+  <span class="nv">path: </span><span class="nf">() -&gt;</span>
+    <span class="k">if</span> <span class="k">this</span><span class="p">.</span><span class="nx">parent</span><span class="o">?</span>
+      <span class="nv">path = </span><span class="k">this</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">path</span><span class="p">()</span>
+      <span class="nx">path</span><span class="p">.</span><span class="nx">push</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span>
+      <span class="nx">path</span>
+    <span class="k">else</span>
+      <span class="p">[</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="p">]</span>
+
+  <span class="nv">normalizePath: </span><span class="nf">(path) -&gt;</span>
+    <span class="k">if</span> <span class="nx">_</span><span class="p">.</span><span class="nx">isString</span> <span class="nx">path</span>
+      <span class="nv">path = </span><span class="nx">path</span><span class="p">.</span><span class="nx">split</span> <span class="s1">&#39;.&#39;</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="nx">_</span><span class="p">.</span><span class="nx">isArray</span> <span class="nx">path</span>
+      <span class="nx">path</span>
+    <span class="k">else</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span> <span class="s2">&quot;Invalid path specification&quot;</span>
+
+  <span class="nv">ensure: </span><span class="nf">(path) -&gt;</span>
+    <span class="nv">path = </span><span class="k">this</span><span class="p">.</span><span class="nx">normalizePath</span> <span class="nx">path</span>
+    <span class="nv">namespace = </span><span class="k">this</span>
+    <span class="k">for</span> <span class="nx">name</span> <span class="k">in</span> <span class="nx">path</span>
+      <span class="nx">unless</span> <span class="nx">namespace</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span><span class="o">?</span>
+        <span class="nx">namespace</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Namespace</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">namespace</span><span class="p">)</span>
+      <span class="nv">namespace = </span><span class="nx">namespace</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span>
+    <span class="nx">namespace</span>
+
+  <span class="nv">add: </span><span class="nf">(properties) -&gt;</span>
+    <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span> <span class="k">this</span><span class="p">,</span> <span class="nx">properties</span>
+
+  <span class="nv">load: </span><span class="nf">(path, options) -&gt;</span>
+    <span class="nv">success = </span><span class="nx">options</span><span class="p">.</span><span class="nx">success</span> <span class="o">or</span> <span class="p">(</span><span class="o">-&gt;</span><span class="p">)</span>
+    <span class="nv">failure = </span><span class="nx">options</span><span class="p">.</span><span class="nx">failure</span> <span class="o">or</span> <span class="p">(</span><span class="o">-&gt;</span><span class="p">)</span>
+    <span class="nv">path = </span><span class="k">this</span><span class="p">.</span><span class="nx">normalizePath</span> <span class="nx">path</span>
+    <span class="k">if</span> <span class="nb">document</span><span class="o">?</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">loadInBrowser</span> <span class="nx">path</span><span class="p">,</span> <span class="nx">success</span><span class="p">,</span> <span class="nx">failure</span>
+    <span class="k">else</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span> <span class="s2">&quot;Loading of context modules not supported in current JavaScript platform.&quot;</span>
+
+  <span class="nv">loadInBrowser: </span><span class="nf">(path, success, failure) -&gt;</span>
+    <span class="nx">unless</span> <span class="nx">$</span><span class="o">?</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span> <span class="s2">&quot;Context module loading depends on jQuery&quot;</span>
+    <span class="nv">target = </span><span class="k">this</span>
+    <span class="nv">url = </span><span class="nx">target</span><span class="p">.</span><span class="nx">root</span><span class="p">().</span><span class="nx">home</span> <span class="o">+</span> <span class="p">(</span><span class="nx">target</span><span class="p">.</span><span class="nx">path</span><span class="p">().</span><span class="nx">concat</span> <span class="nx">path</span><span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.js&#39;</span>
+    <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span>
+      <span class="nv">url: </span><span class="nx">url</span>
+      <span class="nv">dataType: </span><span class="s2">&quot;text&quot;</span> <span class="c1"># Prevent premature evaluation</span>
+      <span class="nv">success: </span><span class="nf">(data, textStatus, jqXHR) -&gt;</span>
+        <span class="k">try</span>
+          <span class="k">if</span> <span class="nb">window</span><span class="p">.</span><span class="nx">hasOwnProperty</span> <span class="s1">&#39;exports&#39;</span>
+            <span class="nv">origExports = </span><span class="nb">window</span><span class="p">.</span><span class="nx">exports</span>
+          <span class="nb">window</span><span class="p">.</span><span class="nv">exports = </span><span class="p">{}</span>
+          <span class="nx">$</span><span class="p">.</span><span class="nx">globalEval</span> <span class="nx">data</span>
+          <span class="nv">leaf = </span><span class="nx">target</span><span class="p">.</span><span class="nx">ensure</span> <span class="nx">path</span>
+          <span class="nx">leaf</span><span class="p">.</span><span class="nx">add</span> <span class="nb">window</span><span class="p">.</span><span class="nx">exports</span>
+          <span class="k">if</span> <span class="nx">origExports</span><span class="o">?</span>
+            <span class="nb">window</span><span class="p">.</span><span class="nv">exports = </span><span class="nx">origExports</span>
+          <span class="k">else</span>
+            <span class="k">delete</span> <span class="nb">window</span><span class="p">.</span><span class="nx">exports</span>
+          <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s1">&#39;Loaded &#39;</span> <span class="o">+</span> <span class="nx">url</span>
+          <span class="nx">success</span><span class="p">()</span>
+        <span class="k">catch</span> <span class="nx">error</span>
+          <span class="nx">failure</span> <span class="nx">error</span>
+      <span class="nv">error: </span><span class="nf">(jqXHR, status, error) -&gt;</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s2">&quot;Failed to load #{url} (#{status}): #{error}&quot;</span>
+        <span class="nx">failure</span> <span class="nx">error</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>Extend <code>Context</code> with behaviour related to namespaces.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">_</span><span class="p">.</span><span class="nx">extend</span> <span class="nx">Context</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span>
+
+  <span class="nv">path: </span><span class="nf">(from = contexts) -&gt;</span>
+    <span class="nv">keys = </span><span class="nx">_</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">from</span><span class="p">)</span>
+    <span class="nv">values = </span><span class="nx">_</span><span class="p">.</span><span class="nx">values</span><span class="p">(</span><span class="nx">from</span><span class="p">)</span>
+    <span class="nv">i = </span><span class="nx">values</span><span class="p">.</span><span class="nx">indexOf</span> <span class="k">this</span>
+    <span class="k">if</span> <span class="nx">i</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span>
+      <span class="p">[</span> <span class="nx">keys</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">]</span>
+    <span class="k">else</span>
+      <span class="k">for</span> <span class="nx">subspace</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">values</span>
+        <span class="k">if</span> <span class="nx">subspace</span> <span class="k">instanceof</span> <span class="nx">Namespace</span> <span class="o">and</span> <span class="nx">keys</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;parent&#39;</span>
+          <span class="nv">p = </span><span class="k">this</span><span class="p">.</span><span class="nx">path</span> <span class="nx">subspace</span>
+          <span class="k">if</span> <span class="nx">p</span>
+            <span class="nx">p</span><span class="p">.</span><span class="nx">unshift</span> <span class="nx">keys</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span>
+            <span class="k">return</span> <span class="nx">p</span>
+      <span class="kc">false</span>
+
+  <span class="nv">name: </span><span class="o">-&gt;</span>
+    <span class="nv">path = </span><span class="k">this</span><span class="p">.</span><span class="nx">path</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nx">path</span>
+      <span class="nx">path</span><span class="p">.</span><span class="nx">join</span> <span class="s1">&#39;.&#39;</span>
+    <span class="k">else</span>
+      <span class="s1">&#39;anonymous&#39;</span>
+
+  <span class="nv">toString: </span><span class="o">-&gt;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39; context&#39;</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <h2>Ancilliary Functions</h2>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>Find the absolute path from which the current script has been
+loaded. If unable, return a falsy value.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">findScriptHome = </span><span class="o">-&gt;</span>
+  <span class="k">try</span>
+    <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span>
+  <span class="k">catch</span> <span class="nx">error</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>Obtain textual stacktrace from exception object</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">trace = </span><span class="nx">error</span><span class="p">.</span><span class="nx">stack</span> <span class="o">or</span> <span class="nx">error</span><span class="p">.</span><span class="nx">stacktrace</span>
+    <span class="k">if</span> <span class="nx">trace</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>Find first line mentioning a URL</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="k">for</span> <span class="nx">line</span> <span class="k">in</span> <span class="nx">trace</span><span class="p">.</span><span class="nx">split</span> <span class="s1">&#39;\n&#39;</span>
+        <span class="nv">matches = </span><span class="sr">/(http|file):\/\/[^/]*(\/.*\/)[^/]*\.js/</span><span class="p">.</span><span class="nx">exec</span> <span class="nx">line</span>
+        <span class="k">if</span> <span class="nx">matches</span><span class="o">?</span>
+          <span class="k">return</span> <span class="nx">matches</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="nx">error</span><span class="p">.</span><span class="nx">sourceURL</span></pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>Internet Explorer</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span> <span class="s1">&#39;TODO: error.sourceURL not supported yet.&#39;</span>
+    <span class="k">else</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span> <span class="s1">&#39;Could not determine script home directory.&#39;</span>
+  <span class="kc">null</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

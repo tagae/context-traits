@@ -1,0 +1,19 @@
+#### Site settings ####
+
+# Identification
+name:        Context Traits
+description: Dynamic Behaviour Adaptation Through Run-Time Trait Recomposition
+copyright:   © 2012 UCLouvain
+url:         http://tagae.github.com/context-traits
+webmaster:   s.gonzalez@uclouvain.be
+keywords:
+  Context-Oriented Programming,
+  Software Traits
+
+# External services
+google-analytics-id: UA-33755361-1
+
+#### Content generation settings ####
+
+pygments: true
+exclude: ["Gemfile", "Gemfile.lock", "Guardfile", "node_modules"]

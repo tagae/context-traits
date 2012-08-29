@@ -1,0 +1,10 @@
+<link href="styles/screen.css" media="screen, projection"
+      rel="stylesheet" type="text/css" />
+
+<link href="styles/pygmentize.css" media="screen, projection"
+      rel="stylesheet" type="text/css" />
+
+{% for style in page.styles %}
+  <link rel="stylesheet" type="text/css"
+        href="{{ style }} " media="screen, projection" />
+{% endfor %}

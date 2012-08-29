@@ -1,0 +1,83 @@
+<!DOCTYPE html>  <html> <head>   <title>adaptation.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="activation.html">                 activation.coffee               </a>                                           <a class="source" href="adaptation.html">                 adaptation.coffee               </a>                                           <a class="source" href="composition.html">                 composition.coffee               </a>                                           <a class="source" href="contexts.html">                 contexts.coffee               </a>                                           <a class="source" href="epilogue.html">                 epilogue.coffee               </a>                                           <a class="source" href="namespaces.html">                 namespaces.coffee               </a>                                           <a class="source" href="prologue.html">                 prologue.coffee               </a>                                           <a class="source" href="prototypes.html">                 prototypes.coffee               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               adaptation.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <p><a href="https://github.com/tagae/context-traits">Context Traits</a>.
+Copyright © 2012 UCLouvain.</p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>Strategies for composition of adaptations.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">strategies =</span>
+  <span class="nv">compose: </span><span class="nf">(adaptation, trait) -&gt;</span>
+    <span class="nv">resultingTrait = </span><span class="nx">Trait</span><span class="p">.</span><span class="nx">compose</span> <span class="nx">adaptation</span><span class="p">.</span><span class="nx">trait</span><span class="p">,</span> <span class="nx">trait</span>
+    <span class="k">for</span> <span class="nx">own</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">propdesc</span> <span class="k">of</span> <span class="nx">resultingTrait</span>
+      <span class="k">if</span> <span class="nx">propdesc</span><span class="p">.</span><span class="nx">conflict</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span> <span class="s2">&quot;Property &#39;#{name}&#39; already adapted for &quot;</span> <span class="o">+</span>
+          <span class="nx">adaptation</span><span class="p">.</span><span class="nx">object</span> <span class="o">+</span> <span class="s2">&quot; in &quot;</span> <span class="o">+</span> <span class="nx">adaptation</span><span class="p">.</span><span class="nx">context</span>
+    <span class="nx">resultingTrait</span>
+  <span class="nv">preserve: </span><span class="nf">(adaptation, trait) -&gt;</span>
+    <span class="nx">Trait</span><span class="p">.</span><span class="nx">override</span> <span class="nx">adaptation</span><span class="p">.</span><span class="nx">trait</span><span class="p">,</span> <span class="nx">trait</span>
+  <span class="nv">override: </span><span class="nf">(adaptation, trait) -&gt;</span>
+    <span class="nx">Trait</span><span class="p">.</span><span class="nx">override</span> <span class="nx">trait</span><span class="p">,</span> <span class="nx">adaptation</span><span class="p">.</span><span class="nx">trait</span>
+  <span class="nv">prevent: </span><span class="nf">(adaptation, trait) -&gt;</span>
+    <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span> <span class="nx">adaptation</span><span class="p">.</span><span class="nx">object</span> <span class="o">+</span>
+      <span class="s2">&quot; already adapted in &quot;</span> <span class="o">+</span> <span class="nx">adaptation</span><span class="p">.</span><span class="nx">context</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>Extend <code>Context</code> with methods related to adaptation.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">_</span><span class="p">.</span><span class="nx">extend</span> <span class="nx">Context</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span>
+
+  <span class="nv">adapt: </span><span class="nf">(object, trait) -&gt;</span>
+    <span class="nx">unless</span> <span class="nx">object</span> <span class="k">instanceof</span> <span class="nb">Object</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span> <span class="s2">&quot;Values of type #{typeof object} cannot be adapted.&quot;</span>
+    <span class="nx">contexts</span><span class="p">.</span><span class="nx">Default</span><span class="p">.</span><span class="nx">addAdaptation</span> <span class="nx">object</span><span class="p">,</span> <span class="nx">Trait</span><span class="p">(</span><span class="nx">object</span><span class="p">),</span> <span class="nx">strategies</span><span class="p">.</span><span class="nx">preserve</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">addAdaptation</span> <span class="nx">object</span><span class="p">,</span> <span class="nx">trait</span><span class="p">,</span> <span class="nx">strategies</span><span class="p">.</span><span class="nx">compose</span>
+
+  <span class="nv">addAdaptation: </span><span class="nf">(object, trait, strategy) -&gt;</span>
+    <span class="nv">trait = </span><span class="nx">traceableTrait</span> <span class="nx">trait</span>
+    <span class="nv">adaptation = </span><span class="k">this</span><span class="p">.</span><span class="nx">adaptationFor</span> <span class="nx">object</span>
+    <span class="k">if</span> <span class="nx">adaptation</span>
+      <span class="nv">adaptation.trait = </span><span class="nx">strategy</span> <span class="nx">adaptation</span><span class="p">,</span> <span class="nx">trait</span>
+      <span class="k">if</span> <span class="k">this</span><span class="p">.</span><span class="nx">isActive</span><span class="p">()</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">manager</span><span class="p">.</span><span class="nx">updateBehaviorOf</span> <span class="nx">object</span>
+    <span class="k">else</span>
+      <span class="nv">trait = </span><span class="nx">Trait</span><span class="p">.</span><span class="nx">compose</span> <span class="nx">trait</span><span class="p">,</span> <span class="nx">traits</span><span class="p">.</span><span class="nx">Extensible</span>
+      <span class="nv">adaptation = </span><span class="k">new</span> <span class="nx">Adaptation</span> <span class="k">this</span><span class="p">,</span> <span class="nx">object</span><span class="p">,</span> <span class="nx">trait</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">adaptations</span><span class="p">.</span><span class="nx">push</span> <span class="nx">adaptation</span>
+      <span class="k">if</span> <span class="k">this</span><span class="p">.</span><span class="nx">isActive</span><span class="p">()</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">manager</span><span class="p">.</span><span class="nx">deployAdaptation</span> <span class="nx">adaptation</span>
+    <span class="k">this</span>
+
+  <span class="nv">adaptationFor: </span><span class="nf">(object) -&gt;</span>
+    <span class="nx">_</span><span class="p">.</span><span class="nx">find</span> <span class="k">this</span><span class="p">.</span><span class="nx">adaptations</span><span class="p">,</span> <span class="nf">(adaptation) -&gt;</span>
+      <span class="nx">adaptation</span><span class="p">.</span><span class="nx">object</span> <span class="o">is</span> <span class="nx">object</span>
+
+  <span class="nv">activateAdaptations: </span><span class="o">-&gt;</span>
+    <span class="k">for</span> <span class="nx">adaptation</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">adaptations</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">manager</span><span class="p">.</span><span class="nx">deployAdaptation</span> <span class="nx">adaptation</span>
+
+  <span class="nv">deactivateAdaptations: </span><span class="o">-&gt;</span>
+    <span class="k">for</span> <span class="nx">adaptation</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">adaptations</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">manager</span><span class="p">.</span><span class="nx">withdrawAdaptation</span> <span class="nx">adaptation</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>Extend <code>Manager</code> with methods related to adaptation.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">_</span><span class="p">.</span><span class="nx">extend</span> <span class="nx">Manager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span>
+
+  <span class="nv">deployAdaptation: </span><span class="nf">(adaptation) -&gt;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">adaptations</span><span class="p">.</span><span class="nx">push</span> <span class="nx">adaptation</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">updateBehaviorOf</span> <span class="nx">adaptation</span><span class="p">.</span><span class="nx">object</span>
+
+  <span class="nv">withdrawAdaptation: </span><span class="nf">(adaptation) -&gt;</span>
+    <span class="nv">i = </span><span class="k">this</span><span class="p">.</span><span class="nx">adaptations</span><span class="p">.</span><span class="nx">indexOf</span> <span class="nx">adaptation</span>
+    <span class="k">if</span> <span class="nx">i</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span> <span class="s2">&quot;Attempt to withdraw unmanaged adaptation&quot;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">adaptations</span><span class="p">.</span><span class="nx">splice</span> <span class="nx">i</span><span class="p">,</span> <span class="mi">1</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">updateBehaviorOf</span> <span class="nx">adaptation</span><span class="p">.</span><span class="nx">object</span>
+
+  <span class="nv">updateBehaviorOf: </span><span class="nf">(object) -&gt;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">adaptationChainFor</span><span class="p">(</span><span class="nx">object</span><span class="p">)[</span><span class="mi">0</span><span class="p">].</span><span class="nx">deploy</span><span class="p">()</span>
+    <span class="k">this</span>
+
+  <span class="nv">adaptationChainFor: </span><span class="nf">(object) -&gt;</span>
+    <span class="nv">relevantAdaptations = </span><span class="nx">_</span><span class="p">.</span><span class="nx">filter</span> <span class="k">this</span><span class="p">.</span><span class="nx">adaptations</span><span class="p">,</span> <span class="nf">(adaptation) -&gt;</span>
+      <span class="nx">adaptation</span><span class="p">.</span><span class="nx">object</span> <span class="o">is</span> <span class="nx">object</span>
+    <span class="k">if</span> <span class="nx">relevantAdaptations</span><span class="p">.</span><span class="nx">length</span> <span class="o">==</span> <span class="mi">0</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span> <span class="s2">&quot;No adaptations found for #{object}&quot;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">policy</span><span class="p">.</span><span class="nx">order</span> <span class="nx">relevantAdaptations</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>Define main behaviour of <code>Adaptation</code>.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">_</span><span class="p">.</span><span class="nx">extend</span> <span class="nx">Adaptation</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span>
+
+  <span class="nv">deploy: </span><span class="o">-&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>Overwrite current object properties with adaptation properties.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span> <span class="k">this</span><span class="p">.</span><span class="nx">object</span><span class="p">,</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">create</span><span class="p">({},</span> <span class="k">this</span><span class="p">.</span><span class="nx">trait</span><span class="p">)</span>
+
+  <span class="nv">toString: </span><span class="o">-&gt;</span>
+    <span class="s2">&quot;Adaptation for #{this.object} in #{this.context}&quot;</span>
+
+  <span class="nv">equivalent: </span><span class="nf">(other) -&gt;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">context</span> <span class="o">is</span> <span class="nx">other</span><span class="p">.</span><span class="nx">context</span> <span class="o">and</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">object</span> <span class="o">is</span> <span class="nx">other</span><span class="p">.</span><span class="nx">object</span> <span class="o">and</span>
+        <span class="nx">Trait</span><span class="p">.</span><span class="nx">eqv</span> <span class="k">this</span><span class="p">.</span><span class="nx">trait</span><span class="p">,</span> <span class="nx">other</span><span class="p">.</span><span class="nx">trait</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

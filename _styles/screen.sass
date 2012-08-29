@@ -1,0 +1,107 @@
+// Colors
+
+$green: hsl(100%, 100%, 30%)
+$red: hsl(0%, 90%, 40%)
+$blue: hsl(190%, 90%, 35%)
+
+$fg-color: black
+$bg-color: white
+$text-color: $fg-color
+$link-color: $blue
+
+// Elements
+
+html
+  color: $fg-color
+  background-color: $bg-color
+
+body
+  margin: 0
+  padding: 0
+  width: 100%
+
+p
+  text-align: justify
+
+a
+  color: $link-color
+  &:not(:hover)
+    text-decoration: none
+
+#page >
+  h1
+    font-size: xx-large
+
+  h2
+    font-size: x-large
+    border-bottom: 1px solid black
+    margin-top: 1.5em
+
+  h3
+    font-size: large
+
+  h4
+    font-size: medium
+
+header
+  margin-bottom: 2em
+  text-align: left
+  h1
+    font:
+      family: 'Trebuchet MS'
+      size: xx-large
+    margin-bottom: 0ex
+  h2
+    display: inline
+    font:
+      family: 'Helvetica'
+      weight: normal
+      size: 11pt
+      style: oblique
+  a
+    color: $text-color
+    text-decoration: none
+  img
+    vertical-align: middle
+    margin: 0 .5ex
+
+#page
+  display: table
+  margin: 0 auto
+  width: auto
+  padding: 0
+
+footer
+  padding-top: 1em
+  padding-bottom: 1ex
+  color: lighten($text-color, 50%)
+  font:
+    family: sans-serif
+    size: x-small
+  text-align: center
+  clear: both
+  a
+    color: inherit
+  ul
+    margin: 0
+    padding: 0
+    li
+      display: inline
+      &:after
+        content: "."
+
+#goog-fixurl
+  font:
+    size: small
+  h3.other-things
+    margin-top: 3em
+    font:
+      size: small
+    b
+      font:
+        weight: normal
+  ul
+    li.search-goog b
+      font:
+        weight: normal
+        family: 'Menlo', 'Monaco', 'Andale Mono', monospace

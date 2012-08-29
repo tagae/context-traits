@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    {% include site-metadata.html %}
+    {% include site-style.html %}
+    {% include site-scripts.html %}
+  </head>
+  <body>
+    <div id="page">
+      {% include site-header.html %}
+      {{ content }}
+      {% include site-footer.html %}
+    </div>
+    <!-- JavaScript at the bottom for fast page loading -->
+    {% include lib/google-chrome-frame.html %}
+    {% include lib/google-analytics.html %}
+  </body>
+</html>
