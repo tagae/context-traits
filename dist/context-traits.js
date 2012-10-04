@@ -213,19 +213,20 @@
 
   traits.Extensible = Trait({
     proceed: function() {
-      var alternatives, args, index, manager, method, name, _ref1;
+      var alternatives, args, index, invocations, manager, method, name, _ref1;
       manager = contexts.Default.manager;
-      if (manager.invocations.length === 0) {
+      invocations = manager.invocations;
+      if (invocations.length === 0) {
         throw new Error("Proceed must be called from an adaptation");
       }
-      _ref1 = manager.invocations.top(), name = _ref1[0], args = _ref1[1], method = _ref1[2];
+      _ref1 = invocations.top(), name = _ref1[0], args = _ref1[1], method = _ref1[2];
       args = arguments.length === 0 ? args : arguments;
       alternatives = manager.orderedMethods(this, name);
       index = alternatives.indexOf(method);
       if (index === -1) {
         throw new Error("Cannot proceed from an inactive adaptation");
       }
-      if (index + 1 >= alternatives.length) {
+      if (index + 1 === alternatives.length) {
         throw new Error("Cannot proceed further");
       }
       return alternatives[index + 1].apply(this, args);
@@ -233,19 +234,18 @@
   });
 
   traceableMethod = function(name, method) {
-    var newMethod;
-    newMethod = function() {
-      var invocations, result;
+    var wrapper;
+    wrapper = function() {
+      var invocations;
       invocations = contexts.Default.manager.invocations;
-      invocations.push([name, arguments, newMethod]);
+      invocations.push([name, arguments, wrapper]);
       try {
-        result = method.apply(this, arguments);
+        return method.apply(this, arguments);
       } finally {
         invocations.pop();
       }
-      return result;
     };
-    return newMethod;
+    return wrapper;
   };
 
   traceableTrait = function(trait) {
