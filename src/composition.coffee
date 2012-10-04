@@ -6,9 +6,10 @@ traits = {}
 traits.Extensible = Trait
   proceed: ->
     manager = contexts.Default.manager
-    if manager.invocations.length == 0
+    invocations = manager.invocations
+    if invocations.length == 0
       throw new Error "Proceed must be called from an adaptation"
-    [name, args, method] = manager.invocations.top()
+    [name, args, method] = invocations.top()
     # Arguments passed to `proceed` take precedence over those of the
     # original invocation.
     args = if arguments.length == 0 then args else arguments
@@ -17,21 +18,20 @@ traits.Extensible = Trait
     index = alternatives.indexOf method
     if index == -1
       throw new Error "Cannot proceed from an inactive adaptation"
-    if index+1 >= alternatives.length
+    if index + 1 == alternatives.length
       throw new Error "Cannot proceed further"
     # Invoke next method.
     alternatives[index+1].apply this, args
 
 traceableMethod = (name, method) ->
-  newMethod = ->
+  wrapper = ->
     invocations = contexts.Default.manager.invocations
-    invocations.push [name, arguments, newMethod]
+    invocations.push [name, arguments, wrapper]
     try
-      result = method.apply this, arguments
+      method.apply this, arguments
     finally
       invocations.pop()
-    result
-  newMethod
+  wrapper
 
 traceableTrait = (trait) ->
   newTrait = Trait.compose trait # copy
