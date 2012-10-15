@@ -7,7 +7,8 @@ Getting Started
 
 ### In the browser
 
-Download the [production version] or [development version] of the library, and load it in your page as usual:
+Download the [production version] or [development version] of the
+library, and include it in your page as usual:
 
 {% highlight html %}
 <script src="context-traits.js"></script>
