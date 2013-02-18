@@ -34,6 +34,10 @@ module.exports = function (grunt) {
 			test: {
 				src: [ '<banner>', 'build/<%= pkg.name %>-tests.js' ],
 				dest: 'test/<%= pkg.name %>-tests.js'
+			},
+			nodeTest: {
+				src: [ '<banner>', 'build/test.js' ],
+				dest: 'test/test.js'
 			}
 		},
 
@@ -102,19 +106,6 @@ module.exports = function (grunt) {
 
 		clean: {
 			folder: [ "build/" ]
-		},
-
-		server: {
-			port: 4000,
-			base: '.'
-		},
-
-		reload: {
-			port: 8000,
-			proxy: {
-				host: 'localhost',
-				port: 4000
-			}
 		}
 	});
 
@@ -122,7 +113,6 @@ module.exports = function (grunt) {
 
 	grunt.loadNpmTasks('grunt-clean');
 	grunt.loadNpmTasks('grunt-docco');
-	grunt.loadNpmTasks('grunt-reload');
 
 	// Generation
 	grunt.registerTask('libs', 'coffee:lib concat:lib min:lib coffee:contexts');
