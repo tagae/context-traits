@@ -1,0 +1,24 @@
+#!/bin/sh
+
+# To automagically copy libraries, tests and documentation to the
+# 'gh-pages' branch, set this script as post-commit hook in git:
+#
+# ln -s dev/git-post-commit .git/hooks/post-commit
+
+msg=$(tput setaf 6)
+rst=$(tput sgr0)
+
+echo "${msg}Post-commit hook.${rst}"
+
+if [ "$(git symbolic-ref HEAD)" = "refs/heads/master" ]; then
+    echo "${msg}Updating gh-pages.${rst}"
+    grunt libs tests docs && {
+    git symbolic-ref HEAD refs/heads/gh-pages;
+    git reset --quiet;
+    git add --update docs dist test;
+    git commit --reuse-message=refs/heads/master > /dev/null;
+    git symbolic-ref HEAD refs/heads/master;
+    git reset --quiet; }
+fi
+
+echo "${msg}End of post-commit hook.${rst}"
