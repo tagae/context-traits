@@ -44,7 +44,7 @@ traceableTrait = (trait) ->
 _.extend Manager.prototype,
 
   orderedMethods: (object, name) ->
-    adaptations = this.adaptationChainFor object
+    adaptations = this.adaptationChainFor object, name
     for adaptation in adaptations
       adaptation.trait[name].value
 
