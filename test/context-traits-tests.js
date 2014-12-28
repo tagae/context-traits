@@ -268,14 +268,14 @@
     noisy = new Context();
     noisy.adapt(Person, NoisyPerson);
     bob = Object.create(Person);
-    equal(Person.greet(), 'hello', "Delegate exhibits default behaviour.");
-    equal(bob.greet(), 'hello', "Delegator exhibits default behaviour.");
+    equal(Person.greet(), 'hello', "Prototype exhibits default behaviour.");
+    equal(bob.greet(), 'hello', "Object exhibits prototype behaviour.");
     noisy.activate();
-    equal(Person.greet(), 'HELLO', "Delegate exhibits adapted behaviour.");
-    equal(bob.greet(), 'HELLO', "Delegator exhibits behaviour of adapted delegate.");
+    equal(Person.greet(), 'HELLO', "Prototype exhibits adapted behaviour.");
+    equal(bob.greet(), 'HELLO', "Object exhibits behaviour of adapted prototype.");
     noisy.deactivate();
-    equal(Person.greet(), 'hello', "Delegate reacts to context deactivation.");
-    return equal(bob.greet(), 'hello', "Delegator exhibits behaviour of readapted delegate.");
+    equal(Person.greet(), 'hello', "Prototype reacts to context deactivation.");
+    return equal(bob.greet(), 'hello', "Object exhibits behaviour of readapted prototype.");
   });
 
   module("Context Composition", {
@@ -385,6 +385,20 @@
     equal(this.phone.advertise(), 'ringtone with screening', "Early deactivation of context is supported.");
     this.screening.deactivate();
     return equal(this.phone.advertise(), 'ringtone', "Behaviour is restored to default.");
+  });
+
+  test("Composition with delegation", function() {
+    var bobsPhone;
+    this.screening.adapt(this.phone, this.screeningPhone);
+    bobsPhone = Object.create(this.phone);
+    equal(this.phone.advertise(), 'ringtone', 'Prototype exhibits default behaviour.');
+    equal(bobsPhone.advertise(), 'ringtone', "Object exhibits prototype behaviour.");
+    this.screening.activate();
+    equal(this.phone.advertise(), 'ringtone with screening', "Prototype exhibits adapted behaviour.");
+    equal(bobsPhone.advertise(), 'ringtone with screening', "Object exhibits behaviour of adapted prototype.");
+    this.screening.deactivate();
+    equal(this.phone.advertise(), 'ringtone', "Prototype reacts to context deactivation.");
+    return equal(bobsPhone.advertise(), 'ringtone', "Object exhibits behaviour of readapted prototype.");
   });
 
   module("Context Namespaces");
