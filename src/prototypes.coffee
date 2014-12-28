@@ -1,5 +1,5 @@
 # [Context Traits](https://github.com/tagae/context-traits).
-# Copyright © 2012 UCLouvain.
+# Copyright © 2012—2015 UCLouvain.
 
 # A _context_ represents a situation that might arise during program
 # execution, and which may affect the way the program behaves. This

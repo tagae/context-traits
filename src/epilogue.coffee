@@ -1,5 +1,5 @@
 # [Context Traits](https://github.com/tagae/context-traits).
-# Copyright © 2012 UCLouvain.
+# Copyright © 2012—2015 UCLouvain.
 
 # If there is no explicit `exports`, take global namespace
 unless exports?

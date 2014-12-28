@@ -1,5 +1,5 @@
 # [Context Traits](https://github.com/tagae/context-traits).
-# Copyright © 2012 UCLouvain.
+# Copyright © 2012—2015 UCLouvain.
 
 # Extend `Context` with methods related to activation.
 
@@ -16,6 +16,8 @@ _.extend Context.prototype,
         if --this.activationCount == 0
           this.deactivateAdaptations()
           delete this.activationStamp
+      else
+        throw new Error 'Cannot deactivate inactive context'
       this
 
     isActive: ->

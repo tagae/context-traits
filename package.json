@@ -2,9 +2,9 @@
     "name": "context-traits",
     "title": "Context Traits",
     "description": "Dynamic behaviour adaptation through run-time trait recomposition",
-    "version": "0.0.0",
+    "version": "0.0.1",
     "homepage": "https://github.com/tagae/context-traits",
-    "copyright": "UCLouvain",
+    "copyright": "© 2012—2015 UCLouvain",
     "contributors": [
         "Sebastián González <s.gonzalez@uclouvain.be>",
         "Marius Colăcioiu <marius.colacioiu@gmail.com>"

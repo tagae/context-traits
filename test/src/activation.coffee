@@ -1,5 +1,5 @@
 # [Context Traits](https://github.com/tagae/context-traits).
-# Copyright © 2012 UCLouvain.
+# Copyright © 2012—2015 UCLouvain.
 
 module "Context Activation"
 
@@ -14,7 +14,7 @@ test "Infrastructure", ->
 test "Basic activation", ->
   context = new Context()
   ok !context.isActive(),
-    "A fresh context is not initially active."
+    "A fresh context is initially inactive."
   noerror (-> context.activate()),
     "Freshly created context can be activated."
   ok context.isActive(),
@@ -28,11 +28,11 @@ test "Basic activation", ->
   strictEqual context, context.deactivate(),
     "deactivate() returns the receiver object."
 
-test "Redundant activation", ->
+test "Multiple activation", ->
   context = new Context()
   context.activate() for n in [1..10]
   ok context.isActive(),
-    "A multiply-activated context remains active."
+    "A multiply-activated context is active."
   context.deactivate() for n in [1..9]
   ok context.isActive(),
     "Context stays active for fewer deactivations than activations."
@@ -40,15 +40,13 @@ test "Redundant activation", ->
   ok !context.isActive(),
     "Context becomes inactive after matching number of deactivations."
 
-test "Redundant deactivation", ->
+test "Disallowed deactivation", ->
   context = new Context()
+  throws (-> context.deactivate()),
+    /cannot.*deactivate.*context/i,
+    "Deactivation of inactive contexts is disallowed."
   context.activate() for n in [1..3]
-  context.deactivate() for n in [1..15]
-  ok !context.isActive(),
-    "Context becomes inactive after equal or more deactivations than activations"
-  context.activate()
-  ok context.isActive(),
-    "Deactivation does not accumulate once the context has become inactive."
-  context.deactivate()
-  ok !context.isActive(),
-    "Context deactivates normally after single activation."
+  context.deactivate() for n in [1..3]
+  throws (-> context.deactivate()),
+    /cannot.*deactivate.*context/i,
+    "Previous context activity should not interfere with disallowed deactivations."

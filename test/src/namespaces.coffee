@@ -1,7 +1,5 @@
-# Context Traits
-# https://github.com/tagae/context-traits
-# Copyright © 2012 UCLouvain.
-# Licensed under Apache Licence, Version 2.0.
+# [Context Traits](https://github.com/tagae/context-traits).
+# Copyright © 2012—2015 UCLouvain.
 
 module "Context Namespaces"
 

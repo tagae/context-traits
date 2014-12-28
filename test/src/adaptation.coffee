@@ -1,5 +1,5 @@
 # [Context Traits](https://github.com/tagae/context-traits).
-# Copyright © 2012 UCLouvain.
+# Copyright © 2012—2015 UCLouvain.
 
 module "Context Adaptation"
 
@@ -43,18 +43,7 @@ test "Adaptation to active context", ->
     "Adapted behaviour is persistent."
   noisy.deactivate()
 
-test "Detection of ambiguous extension", ->
-  person = name: -> 'Ken'
-  formalPerson = Trait name: -> 'Ken Loach'
-  veryFormalPerson = Trait name: -> 'Mr. Ken Loach'
-  formal = new Context 'formal'
-  noerror (-> formal.adapt person, formalPerson),
-    "Method can be adapted to context."
-  throws (-> formal.adapt person, veryFormalPerson),
-    /property.*already adapted/i,
-    "Rejection of two method definitions for the same context."
-
-test "Adaptation extension", ->
+test "Multiple extension", ->
   person =
     name: -> 'Ken'
     greet: -> 'Hi there'
@@ -71,6 +60,17 @@ test "Adaptation extension", ->
   equal person.greet(), "Hello",
     "Additional adapted behaviour is exhibited."
   formal.deactivate()
+
+test "Detection of ambiguous extension", ->
+  person = name: -> 'Ken'
+  formalPerson = Trait name: -> 'Ken Loach'
+  veryFormalPerson = Trait name: -> 'Mr. Ken Loach'
+  formal = new Context 'formal'
+  noerror (-> formal.adapt person, formalPerson),
+    "Method can be adapted to context."
+  throws (-> formal.adapt person, veryFormalPerson),
+    /property.*already adapted/i,
+    "Rejection of two method definitions for the same context."
 
 test "Preservation of receiver identity", ->
   person =
@@ -95,4 +95,25 @@ test "Adaptation of primitive values", ->
   upsideDownNumber = Trait "+": (a, b) -> a - b
   throws (-> upsideDown.adapt 42, upsideDownNumber),
     /value.*cannot be adapted/i,
-    "Numbers cannot be adapted in JavaScript (unfortunately)."
+    "Numbers cannot be adapted in JavaScript, unfortunately."
+
+test "Adaptation through delegation", ->
+  Person = greet: -> 'hello'
+  NoisyPerson = Trait greet: -> 'HELLO'
+  noisy = new Context()
+  noisy.adapt Person, NoisyPerson
+  bob = Object.create(Person);
+  equal Person.greet(), 'hello',
+    "Delegate exhibits default behaviour."
+  equal bob.greet(), 'hello',
+    "Delegator exhibits default behaviour."
+  noisy.activate()
+  equal Person.greet(), 'HELLO',
+    "Delegate exhibits adapted behaviour."
+  equal bob.greet(), 'HELLO',
+    "Delegator exhibits behaviour of adapted delegate."
+  noisy.deactivate()
+  equal Person.greet(), 'hello',
+    "Delegate reacts to context deactivation."
+  equal bob.greet(), 'hello',
+    "Delegator exhibits behaviour of readapted delegate."

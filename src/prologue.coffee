@@ -1,5 +1,5 @@
 # [Context Traits](https://github.com/tagae/context-traits).
-# Copyright © 2012 UCLouvain.
+# Copyright © 2012—2015 UCLouvain.
 
 # Host Features
 # -------------
@@ -10,17 +10,20 @@
 # function can at least remind the user that such libraries need to be
 # loaded.
 
-ensureObject = (name, file) ->
+ensureObject = (name, file, path = []) ->
   object = this[name] # reads current module or `window` object
   unless object?
     if require?
-      this[name] = require file
+      object = require file
+      for attribute in path
+        object = object[attribute]
+      this[name] = object
     else
       throw new Error "Required object '#{name}' of library '#{file}' not found"
 
 # Check dependencies.
 ensureObject '_', 'underscore'
-ensureObject 'Trait', 'traits'
+ensureObject 'Trait', 'traits', ['Trait']
 
 # Object Orientation
 # ------------------
