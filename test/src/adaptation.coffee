@@ -104,16 +104,16 @@ test "Adaptation through delegation", ->
   noisy.adapt Person, NoisyPerson
   bob = Object.create(Person);
   equal Person.greet(), 'hello',
-    "Delegate exhibits default behaviour."
+    "Prototype exhibits default behaviour."
   equal bob.greet(), 'hello',
-    "Delegator exhibits default behaviour."
+    "Object exhibits prototype behaviour."
   noisy.activate()
   equal Person.greet(), 'HELLO',
-    "Delegate exhibits adapted behaviour."
+    "Prototype exhibits adapted behaviour."
   equal bob.greet(), 'HELLO',
-    "Delegator exhibits behaviour of adapted delegate."
+    "Object exhibits behaviour of adapted prototype."
   noisy.deactivate()
   equal Person.greet(), 'hello',
-    "Delegate reacts to context deactivation."
+    "Prototype reacts to context deactivation."
   equal bob.greet(), 'hello',
-    "Delegator exhibits behaviour of readapted delegate."
+    "Object exhibits behaviour of readapted prototype."

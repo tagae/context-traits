@@ -85,3 +85,21 @@ test "Interleaved activation", ->
   this.screening.deactivate()
   equal this.phone.advertise(), 'ringtone',
     "Behaviour is restored to default."
+
+test "Composition with delegation", ->
+  this.screening.adapt this.phone, this.screeningPhone
+  bobsPhone = Object.create this.phone
+  equal this.phone.advertise(), 'ringtone',
+    'Prototype exhibits default behaviour.'
+  equal bobsPhone.advertise(), 'ringtone',
+    "Object exhibits prototype behaviour."
+  this.screening.activate()
+  equal this.phone.advertise(), 'ringtone with screening',
+    "Prototype exhibits adapted behaviour."
+  equal bobsPhone.advertise(), 'ringtone with screening',
+    "Object exhibits behaviour of adapted prototype."
+  this.screening.deactivate()
+  equal this.phone.advertise(), 'ringtone',
+    "Prototype reacts to context deactivation."
+  equal bobsPhone.advertise(), 'ringtone',
+    "Object exhibits behaviour of readapted prototype."
