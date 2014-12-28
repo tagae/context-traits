@@ -3,7 +3,7 @@
 # To automagically copy libraries, tests and documentation to the
 # 'gh-pages' branch, set this script as post-commit hook in git:
 #
-# ln -s dev/git-post-commit .git/hooks/post-commit
+# ln dev/git-post-commit .git/hooks/post-commit
 
 msg=$(tput setaf 6)
 rst=$(tput sgr0)
