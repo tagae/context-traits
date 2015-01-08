@@ -9,12 +9,12 @@ traits.Extensible = Trait
     invocations = manager.invocations
     if invocations.length == 0
       throw new Error "Proceed must be called from an adaptation"
-    [name, args, method] = invocations.top()
+    [object, method, name, args] = invocations.top()
     # Arguments passed to `proceed` take precedence over those of the
     # original invocation.
     args = if arguments.length == 0 then args else arguments
     # Find next method.
-    alternatives = manager.orderedMethods this, name
+    alternatives = manager.orderedMethods object, name
     index = alternatives.indexOf method
     if index == -1
       throw new Error "Cannot proceed from an inactive adaptation"
@@ -23,20 +23,20 @@ traits.Extensible = Trait
     # Invoke next method.
     alternatives[index+1].apply this, args
 
-traceableMethod = (name, method) ->
+traceableMethod = (object, name, method) ->
   wrapper = ->
     invocations = contexts.Default.manager.invocations
-    invocations.push [name, arguments, wrapper]
+    invocations.push [object, wrapper, name, arguments]
     try
       method.apply this, arguments
     finally
       invocations.pop()
   wrapper
 
-traceableTrait = (trait) ->
+traceableTrait = (trait, object) ->
   newTrait = Trait.compose trait # copy
   for own name, propdesc of newTrait when _.isFunction propdesc.value
-    propdesc.value = traceableMethod name, propdesc.value
+    propdesc.value = traceableMethod object, name, propdesc.value
   newTrait
 
 # Extend `Manager` with methods related to composition.

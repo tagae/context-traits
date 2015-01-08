@@ -34,7 +34,7 @@ _.extend Context.prototype,
     this.addAdaptation object, trait, strategies.compose
 
   addAdaptation: (object, trait, strategy) ->
-    trait = traceableTrait trait
+    trait = traceableTrait trait, object
     adaptation = this.adaptationFor object
     if adaptation
       adaptation.trait = strategy adaptation, trait
