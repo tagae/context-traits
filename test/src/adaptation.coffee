@@ -102,7 +102,7 @@ test "Adaptation through delegation", ->
   NoisyPerson = Trait greet: -> 'HELLO'
   noisy = new Context()
   noisy.adapt Person, NoisyPerson
-  bob = Object.create(Person);
+  bob = Object.create Person;
   equal Person.greet(), 'hello',
     "Prototype exhibits default behaviour."
   equal bob.greet(), 'hello',

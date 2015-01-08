@@ -4,6 +4,7 @@
 # Strategies for composition of adaptations.
 
 strategies =
+
   compose: (adaptation, trait) ->
     resultingTrait = Trait.compose adaptation.trait, trait
     for own name, propdesc of resultingTrait
@@ -11,10 +12,13 @@ strategies =
         throw new Error "Property '#{name}' already adapted for " +
           adaptation.object + " in " + adaptation.context
     resultingTrait
+
   preserve: (adaptation, trait) ->
     Trait.override adaptation.trait, trait
+
   override: (adaptation, trait) ->
     Trait.override trait, adaptation.trait
+
   prevent: (adaptation, trait) ->
     throw new Error adaptation.object +
       " already adapted in " + adaptation.context
