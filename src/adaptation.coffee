@@ -30,7 +30,12 @@ _.extend Context.prototype,
   adapt: (object, trait) ->
     unless object instanceof Object
       throw new Error "Values of type #{typeof object} cannot be adapted."
-    contexts.Default.addAdaptation object, Trait(object), strategies.preserve
+    objectTrait = Trait(object)
+    methods = {}
+    for prop of object
+      methods[prop] = object[prop] unless object.hasOwnProperty(prop)
+    finalTrait = Trait.compose objectTrait, Trait(methods)
+    contexts.Default.addAdaptation object, finalTrait, strategies.preserve
     this.addAdaptation object, trait, strategies.compose
 
   addAdaptation: (object, trait, strategy) ->
@@ -79,11 +84,20 @@ _.extend Manager.prototype,
     this.adaptationChainFor(object)[0].deploy()
     this
 
-  adaptationChainFor: (object) ->
+  adaptationChainFor: (object, methodName) ->
     relevantAdaptations = _.filter this.adaptations, (adaptation) ->
       adaptation.object is object
     if relevantAdaptations.length == 0
       throw new Error "No adaptations found for #{object}"
+
+    if typeof methodName isnt "undefined"
+      _list = []
+      _i = 0
+      while _i < relevantAdaptations.length
+        adaptation = relevantAdaptations[_i]
+        _list.push adaptation if methodName of adaptation.trait
+        _i++
+      relevantAdaptations = _list
     this.policy.order relevantAdaptations
 
 # Define main behaviour of `Adaptation`.
