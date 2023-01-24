@@ -7,3 +7,4 @@ docs/
 node_modules/
 build/
 test/context-traits-tests.js
+.idea/
