@@ -40,7 +40,7 @@
         "underscore": "1.13.x"
     },
     "devDependencies": {
-        "grunt": "0.4.x",
+        "grunt": "1.5.x",
         "grunt-clean": "0.4.x",
         "grunt-docco": "0.5.x",
         "underscore.string": "3.3.x",
